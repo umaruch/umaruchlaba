@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Обращения</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <style>
+            header{
+                background-color: #F8F8F8;
+                padding-bottom: 5px;
+                padding-top: 5px;
+            }
+            .content{
+                width: 90%;
+                text-align: center;
+            }
+            .main{
+                margin-top: 10px;
+            }
+            a{
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+            table{
+                margin: auto;
+            }
+            td{
+                border-left: 1px solid #4298FF;
+                border-right: 1px solid #4298FF;
+                padding-right: 30px;
+                padding-left: 30px;
+            }
+            #formdiv1{
+                display: none;
+                position: absolute;
+                top: 10px;
+                left: 25%;
+                width: 400px;
+                padding-top: 3px;
+                padding-left: 10px;
+                padding-bottom: 10px;
+                border: 2px solid #4298FF;
+                background-color: white;
+                border-radius: 5px;
+            }
+            #formdiv2{
+                display: none;
+                position: absolute;
+                top: 10px;
+                left: 25%;
+                width: 400px;
+                padding-top: 3px;
+                padding-left: 10px;
+                padding-bottom: 10px;
+                border: 2px solid #4298FF;
+                background-color: white;
+                border-radius: 5px;
+            }
+            label{
+                width: 120px;
+                padding-right: 5px;
+            }
+            .snup{
+                position: fixed;
+                bottom: 0px;
+                left: 5px;
+            }
+        </style>
+        <script>
+            function openForm(){
+                document.getElementById("formdiv1").style.display = "block";
+            }
+            function closeForm(){  
+                document.getElementById("formdiv1").style.display = "none";
+            }
+            function openCF(el){
+                var id = el.className;
+                var xhr2 = new XMLHttpRequest();
+                xhr2.open('GET',"{% url 'changeusage' %}"+"?id="+id, false);
+                xhr2.send();
+                if (xhr2.status != 200){
+                    console.log(xhr2.status+':'+xhr2.statusText);
+                }
+                else{
+                    document.getElementById("formdiv2").style.display = "block";
+                    document.getElementById('object_id').value = id;
+                    document.getElementById("inputform").innerHTML = xhr2.responseText;
+                }
+            }
+            function closeCF(el){
+                document.getElementById("formdiv2").style.display = "none";
+            }
+        </script>
+    </head>
+    <body>
+
+        <header>
+            <div class="content">
+                <h3>BookHub</h3>
+                <div class="menu">
+                    <a href="{% url 'visitors' %}">Посетители</a>
+                    <a href="{% url 'usages' %}">Обращения</a>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main">
+            <div class="content">
+                <p>Обращения</p><a style="color: #4298FF;" onclick="openForm()">добавить</a>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>
+                                <a href="?sort=visitor">Посетитель</a>
+                            </td>
+                            <td>
+                                <a href="?sort=date_on">Дата обращения</a>
+                            </td>
+                            <td>
+                                <a href="?sort=date_of">День возврата</a>
+                            </td>
+                            <td>
+                                <a href="?sort=book_name">Название книги</a>
+                            </td>
+                            <td>
+                                <a href="?sort=book_id">Код книги</a>
+                            </td>
+                            <td>
+                                <a href="?sort6=book_author">Автор книги</a>
+                            </td>
+                            
+                            <td>Функции</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if model %}
+                        {% for m in model %}
+                        <tr>
+                            <td>{{ m.visitor }}</td>
+                            <td>{{ m.date_on }}</td>
+                            <td>{{ m.date_of }}</td>
+                            <td>{{ m.book_name }}</td>
+                            <td>{{ m.book_id }}</td>
+                            <td>{{ m.book_author }}</td>
+                            <td>
+                                <a href="{% url 'delusage' %}?id={{ m.id }}">Удалить</a>
+                                <a onclick='openCF(this)' class="{{m.id}}" style="color: #4298FF;">Изменить</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+            <div id="formdiv1">
+                <form action="{% url 'usages' %}" method="POST">
+                    {% csrf_token %}
+                    <p>Новое обращение</p>
+                    {% for field in form %}
+                    {{field.label_tag}}{{field}}<br>
+                    {% endfor %}
+                    <input type="button" value="Отмена" onclick="closeForm()">
+                    <input type="submit" value="Создать">
+                </form>
+            </div>
+
+        <div id="formdiv2">
+            <form action="{% url 'changeusage' %}" method="POST" id="form">
+                {% csrf_token %}
+                <p id="form_name">Изменение данных обращения</p>
+                <input type="hidden" id="object_id" name="id">
+                <div id="inputform">
+                    
+                </div>
+                <input type="button" value="Отмена" onclick="closeCF()">
+                <input type="submit" id="form_submit" value="Изменить">
+            </form>
+        </div>
+        <img class="snup" src="https://i.gifer.com/origin/bb/bb242e31f5faafce660bc89fd0f9d9ed_w200.gif">
+    </body>
+</html>
