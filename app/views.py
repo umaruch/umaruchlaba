@@ -24,7 +24,7 @@ def change_usage(request):
         usage.visitor_id = request.POST.get("visitor")
         date_on = request.POST.get("date_on_year")+'-'+request.POST.get("date_on_month").zfill(2)+'-'+request.POST.get("date_on_day").zfill(2)
         usage.date_on = datetime.strptime(date_on, "%Y-%m-%d").date()
-        date_of = request.POST.get("date_of_year")+'-'+request.POST.get("date_month").zfill(2)+'-'+request.POST.get("date_of_day").zfill(2)
+        date_of = request.POST.get("date_of_year")+'-'+request.POST.get("date_of_month").zfill(2)+'-'+request.POST.get("date_of_day").zfill(2)
         usage.date_of = datetime.strptime(date_of, "%Y-%m-%d").date()
         usage.book_name = request.POST.get("book_name")
         usage.book_id = request.POST.get("book_id")
